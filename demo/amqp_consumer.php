@@ -14,17 +14,18 @@ $PORT = 5672;
 $USER = 'guest';
 $PASS = 'guest';
 $VHOST = '/';
-$EXCHANGE = 'router';
+$EXCHANGE = 'topic_exchange';
 $QUEUE = 'msgs';
 $CONSUMER_TAG = 'consumer';
+$KEY = 'random.#';
 
 $conn = new AMQPConnection($HOST, $PORT, $USER, $PASS);
 $ch = $conn->channel();
 $ch->access_request($VHOST, false, false, true, true);
 
 $ch->queue_declare($QUEUE);
-$ch->exchange_declare($EXCHANGE, 'direct', false, false, false);
-$ch->queue_bind($QUEUE, $EXCHANGE);
+$ch->exchange_declare($EXCHANGE, 'topic', false, false, false);
+$ch->queue_bind($QUEUE, $EXCHANGE, $KEY);
 
 function process_message($msg) {
     global $ch, $CONSUMER_TAG;
